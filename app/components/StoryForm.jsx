@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import Image from "next/image";
 import Head from "next/head";
@@ -17,6 +17,7 @@ const StoryForm = () => {
   const [generating, setGenerating] = useState(false);
   const [story, setStory] = useState([]);
   const [copied, setCopied] = useState("");
+  const generatedStoriesRef = useRef(null);
 
   // Load saved stories from localStorage when the component mounts
   useEffect(() => {
@@ -67,6 +68,11 @@ const StoryForm = () => {
       localStorage.setItem("generatedStories", JSON.stringify(newStories));
 
       toast.success("Story generated!");
+
+      // Scroll to the section of generated stories after generating a new story
+      if (generatedStoriesRef.current !== null) {
+        generatedStoriesRef.current.scrollIntoView({ behavior: "smooth" });
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -163,11 +169,14 @@ const StoryForm = () => {
           )}
         </div>
         <hr className="h-px bg-gray-700 border-1 dark:bg-gray-700" />
-        <div className="space-y-10 my-10">
+        <section className="space-y-10 my-10">
           {story.length > 0 && (
             <>
               <div>
-                <h2 className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto">
+                <h2
+                  className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto"
+                  ref={generatedStoriesRef}
+                >
                   Your generated tales
                 </h2>
               </div>
@@ -186,7 +195,7 @@ const StoryForm = () => {
                           <Image
                             src={copied === item ? TickIcon : CopyIcon}
                             alt="copy_btn"
-                            className="absolute top-2 right-2 w-[4%] h-[4%]"
+                            className="absolute top-2 right-3 w-[4%] h-[4%]"
                           />
                         </div>
                         <p>{item}</p>
@@ -196,7 +205,7 @@ const StoryForm = () => {
               </div>
             </>
           )}
-        </div>
+        </section>
       </main>
     </div>
   );
