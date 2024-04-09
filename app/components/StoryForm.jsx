@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+import Image from "next/image";
 import Head from "next/head";
 import Header from "./Header";
 import { toast } from "sonner";
+
+import CopyIcon from "../../public/assets/copy.svg";
+import TickIcon from "../../public/assets/tick.svg";
 
 const StoryForm = () => {
   const [name, setName] = useState("");
@@ -12,6 +16,7 @@ const StoryForm = () => {
   const [creature, setCreature] = useState("");
   const [generating, setGenerating] = useState(false);
   const [story, setStory] = useState([]);
+  const [copied, setCopied] = useState("");
 
   // Load saved stories from localStorage when the component mounts
   useEffect(() => {
@@ -64,6 +69,19 @@ const StoryForm = () => {
       setName("");
       setSetting("");
       setCreature("");
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    try {
+      navigator.clipboard.writeText(text);
+      setCopied(text);
+      setTimeout(() => setCopied(false), 3000);
+
+      toast.success("Copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy to clipboard");
     }
   };
 
@@ -153,9 +171,19 @@ const StoryForm = () => {
                   story.map((item) => {
                     return (
                       <div
-                        className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                        className="bg-white rounded-xl shadow-md p-10 hover:bg-gray-100 transition cursor-copy border relative"
                         key={item}
                       >
+                        <div
+                          className="copy_btn"
+                          onClick={() => copyToClipboard(item)}
+                        >
+                          <Image
+                            src={copied === item ? TickIcon : CopyIcon}
+                            alt="copy_btn"
+                            className="absolute top-2 right-2 w-[4%] h-[4%]"
+                          />
+                        </div>
                         <p>{item}</p>
                       </div>
                     );
