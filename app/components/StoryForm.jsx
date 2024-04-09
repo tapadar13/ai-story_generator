@@ -32,6 +32,11 @@ const StoryForm = () => {
   }, []);
 
   const generateStory = async () => {
+    if (!name || !setting || !creature) {
+      toast.error("Please fill in all fields before generating the story.");
+      return;
+    }
+
     setGenerating(true);
 
     try {
