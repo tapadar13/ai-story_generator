@@ -52,12 +52,10 @@ const StoryForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to generate story");
         toast.error("Failed to generate story");
       }
 
       const aiAnswer = await response.json();
-      // const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br />");
       const formattedAnswer = aiAnswer.reply;
 
       // Limit the number of stored stories to 2
@@ -87,11 +85,10 @@ const StoryForm = () => {
     try {
       navigator.clipboard.writeText(text);
       setCopied(text);
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(null), 3000);
 
       toast.success("Copied to clipboard!");
     } catch (error) {
-      console.error("Failed to copy:", error);
       toast.error("Failed to copy to clipboard");
     }
   };
@@ -153,10 +150,17 @@ const StoryForm = () => {
 
           {!generating && (
             <button
-              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full flex items-center justify-center gap-2"
               onClick={() => generateStory()}
             >
-              Generate your story &rarr;
+              <Image
+                src="/assets/stars.svg"
+                alt="stars"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate your story
             </button>
           )}
           {generating && (
@@ -174,7 +178,7 @@ const StoryForm = () => {
             <>
               <div>
                 <h2
-                  className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto"
+                  className="sm:text-4xl text-3xl font-bold blue-gradient-text mx-auto p-1"
                   ref={generatedStoriesRef}
                 >
                   Your generated tales
@@ -188,14 +192,11 @@ const StoryForm = () => {
                         className="bg-white rounded-xl shadow-md p-10 hover:bg-gray-100 transition cursor-copy border relative"
                         key={item}
                       >
-                        <div
-                          className="copy_btn"
-                          onClick={() => copyToClipboard(item)}
-                        >
+                        <div onClick={() => copyToClipboard(item)}>
                           <Image
                             src={copied === item ? TickIcon : CopyIcon}
                             alt="copy_btn"
-                            className="absolute top-2 right-3 w-[4%] h-[4%]"
+                            className="absolute top-2 right-3 w-[4%] h-[4%] object contain"
                           />
                         </div>
                         <p>{item}</p>
